@@ -39,7 +39,7 @@ module "ec2_instances" {
 }
 
 module "website_s3_bucket" {
-  source = "./modules/aws-s3-static-website-bucket"
+  source = "git::https://github.com/octodemo/aws-terraform-s3.git"
 
   bucket_name = "helaili-test-may-06-2020"
 
