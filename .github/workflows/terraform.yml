@@ -19,7 +19,6 @@ jobs:
         echo username=helaili >> creds.txt
         echo " " >> creds.txt
         cat creds.txt
-        cat creds.txt | git credential fill 
     - uses: hashicorp/setup-terraform@v1
     - run: terraform init
     - run: terraform apply -auto-approve
