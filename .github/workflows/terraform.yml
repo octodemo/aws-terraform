@@ -9,14 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: |
-      echo password=${{secrets.PAT}} >> creds.txt 
+    - name: set Git credentials
+      env: 
+        GITHUB_PASSWORD: ${{secrets.PAT}}
+      run: |
+      echo password=$GITHUB_PASSWORD >> creds.txt 
       echo protocol=https >> creds.txt 
       echo host=github.com >> creds.txt 
       echo username=helaili >> creds.txt 
       echo ' ' >> creds.txt 
 
     - run: cat creds.txt | git credential fill 
+
     - uses: hashicorp/setup-terraform@v1
     - run: terraform init
     - run: terraform apply -auto-approve
