@@ -10,6 +10,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: echo "protocol=https \nhost=github.com \nusername=helaili \npassword=${{ secrets.PAT }}" | git credential fill
+    - run: |
+      echo "protocol=https\nhost=github.com\nusername=helaili\npassword=${{ secrets.PAT }}\n\n" >> creds.txt
+      cat creds.txt | git credential fill
+      
     - uses: hashicorp/setup-terraform@v1
     - run: terraform init
     - run: terraform apply -auto-approve
