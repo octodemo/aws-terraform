@@ -9,7 +9,7 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/che   ckout@v2
     - uses: fusion-engineering/setup-git-credentials@v2
       with:
         credentials: ${{secrets.PAT}}
@@ -38,7 +38,7 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}} 
-    - run: terraform destroy -auto-approve ~/terraform/plan
+    - run: terraform destroy -auto-approve 
       if: github.event_name == 'pull_request' && github.event.action == 'labeled'
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
