@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy with approval
 
 on:
   pull_request
@@ -7,7 +7,7 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
-    - run: echo ${{github.event}}
+    - run: echo ${{toJSON(github.event)}}
     - uses: actions/checkout@v2
     - uses: fusion-engineering/setup-git-credentials@v2
       with:
