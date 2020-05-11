@@ -1,11 +1,11 @@
 name: Deploy
 
 on:
-  label:
-    types: [created, deleted]
+  pull_request:
+    types: [unlabeled, labeled]
     
 jobs:
-  terraform:
+  terraform:  
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
