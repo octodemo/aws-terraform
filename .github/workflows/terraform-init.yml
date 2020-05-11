@@ -7,10 +7,6 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
-    - name: echo
-      env: 
-        EVENT: ${{ toJSON(github.event) }}
-      run: echo $EVENT
     - uses: actions/checkout@v2
     - uses: fusion-engineering/setup-git-credentials@v2
       with:
@@ -28,7 +24,9 @@ jobs:
     - name: Plan
       id: plan
       if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
-      run: terraform plan -out ~/terraform-plan
+      run: |
+        mkdir ~/terraform-plan
+        terraform plan -out ~/terraform-plan
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}} 
