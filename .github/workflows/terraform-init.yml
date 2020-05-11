@@ -7,7 +7,7 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
-    - run: env 
+    - run: echo ${{github.event}}
     - uses: actions/checkout@v2
     - uses: fusion-engineering/setup-git-credentials@v2
       with:
@@ -24,20 +24,9 @@ jobs:
       run: terraform init
     - name: Plan
       id: plan
+      if: github.event_name == 'pull_request' && github.event.type == 'synchronize'
       run: terraform plan -out $GITHUB_WORKSPACE/terraform-plan
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}} 
-    - uses: actions/github-script@0.9.0
-      env:
-        STDOUT: "```${{ steps.plan.outputs.stdout }}```"
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          github.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: process.env.STDOUT
-          })
-
+    
