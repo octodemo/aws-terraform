@@ -14,8 +14,8 @@ jobs:
     - name: Caching
       uses: actions/cache@v1
       with:
-        path: $HOME/terraform
-        key: $GITHUB_SHA
+        path: ${{env.HOME}}/terraform
+        key: ${{github.sha}}
     - uses: hashicorp/setup-terraform@v1
       with:
         terraform_wrapper: true
