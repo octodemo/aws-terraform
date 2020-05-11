@@ -7,7 +7,10 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
-    - run: echo ${{toJSON(github.event)}}
+    - name: echo
+      env: 
+        EVENT: ${{ toJSON(github.event) }}
+      run: echo $EVENT
     - uses: actions/checkout@v2
     - uses: fusion-engineering/setup-git-credentials@v2
       with:
