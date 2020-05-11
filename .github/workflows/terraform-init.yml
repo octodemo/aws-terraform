@@ -1,0 +1,23 @@
+name: Deploy
+
+on:
+  pull_request
+    
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: fusion-engineering/setup-git-credentials@v2
+      with:
+        credentials: ${{secrets.PAT}}
+    - uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_wrapper: true
+    - name: Init
+      run: terraform init
+    - name: Plan
+      id: plan
+      run: terraform plan -no-color
+    - run: echo ${{ steps.plan.outputs.stdout }}
+
