@@ -2,14 +2,16 @@ name: Deploy with approval
 
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
-      - labeled     
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
 jobs:
   terraform-plan:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize')
+    if: github.event_name == 'pull_request' 
     steps:
     - uses: actions/checkout@v2
     - uses: fusion-engineering/setup-git-credentials@v2
@@ -48,7 +50,7 @@ jobs:
           
   terraform-apply:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.action == 'labeled'
+    if: github.event_name == 'push' 
     steps:
     - uses: actions/checkout@v2
     - uses: fusion-engineering/setup-git-credentials@v2
