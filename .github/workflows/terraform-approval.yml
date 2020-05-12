@@ -3,12 +3,13 @@ name: Deploy with approval
 on:
   pull_request:
     types:
+      - opened
       - synchronize
       - labeled     
 jobs:
   terraform-plan:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
+    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize')
     steps:
     - uses: actions/checkout@v2
     - uses: fusion-engineering/setup-git-credentials@v2
