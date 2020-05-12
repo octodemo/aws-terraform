@@ -2,12 +2,16 @@ name: Deploy with approval
 
 on:
   pull_request:
-    types:
-      - synchronize
-      - labeled     
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
 jobs:
-  terraform:
+  terraform-plan:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' 
     steps:
     - uses: actions/checkout@v2
     - uses: fusion-engineering/setup-git-credentials@v2
@@ -25,15 +29,44 @@ jobs:
       run: terraform init
     - name: Plan
       id: plan
-      if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
       run: |
         mkdir ~/terraform
-        terraform plan -out ~/terraform/plan
+        terraform plan -no-color -out ~/terraform/plan
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}} 
+    - uses: actions/github-script@0.9.0
+      env:
+        STDOUT: "```${{ steps.plan.outputs.stdout }}```"
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: process.env.STDOUT
+          })
+          
+  terraform-apply:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' 
+    steps:
+    - uses: actions/checkout@v2
+    - uses: fusion-engineering/setup-git-credentials@v2
+      with:
+        credentials: ${{secrets.PAT}}
+    - name: Caching
+      uses: actions/cache@v1
+      with:
+        path: ~/terraform
+        key: ${{github.sha}}
+    - uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_wrapper: true
+    - name: Init
+      run: terraform init
     - name: Apply
-      if: github.event_name == 'pull_request' && github.event.action == 'labeled'
       run: terraform apply -auto-approve ~/terraform/plan
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
